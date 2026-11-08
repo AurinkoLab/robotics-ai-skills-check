@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skills Check — AI &amp; Robotics 12+</title>
+<style>
+  :root{
+    --bg:#fbf8f2; --card:#ffffff; --ink:#1d2433; --muted:#5d667a; --line:#e6e0d3;
+    --accent:#f08a00; --accent-ink:#a35200; --accent-soft:#fff1da;
+    --btn:#b85c00; --btn-h:#9a4d00; --btn-ink:#ffffff;
+    --ok-soft:#e3f5ea; --info:#2a5fd0; --info-soft:#e6eefc; --warn-soft:#fdeee6; --err:#b42318;
+    --code-bg:#1d2433; --code-ink:#f3f0e8; --chip:#efe9dc;
+    --radius:14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#141821; --card:#1d2330; --ink:#eef0f6; --muted:#a2abc0; --line:#2e3646;
+      --accent:#ffa21f; --accent-ink:#ffb74d; --accent-soft:#3a2b14;
+      --btn:#ffa21f; --btn-h:#ffb74d; --btn-ink:#1d2433;
+      --ok-soft:#173326; --info:#8db1ff; --info-soft:#1b2744; --warn-soft:#3a2a22; --err:#ff8a80;
+      --code-bg:#0e1118; --code-ink:#f3f0e8; --chip:#2a3140;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6;font-size:17px}
+  .wrap{max-width:760px;margin:0 auto;padding:0 16px 64px}
+  .eyebrow{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);font-weight:700}
+  header.hero{padding:44px 0 8px}
+  h1{font-size:2.3rem;line-height:1.15;margin:.2em 0 .3em}
+  h2{font-size:1.4rem;line-height:1.3;margin:1.6em 0 .4em}
+  h3{font-size:1.1rem;margin:0 0 .4em}
+  p{margin:.6em 0}
+  a{color:var(--info)}
+  .lead{font-size:1.1rem;color:var(--muted)}
+  .hint{font-size:.9rem;color:var(--muted)}
+  .err{color:var(--err);font-weight:600}
+  .callout{background:var(--accent-soft);border-left:5px solid var(--accent);padding:14px 18px;border-radius:0 var(--radius) var(--radius) 0;margin:20px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin:16px 0}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:16px 0}
+  .grid .card{margin:0}
+  .step{display:flex;gap:14px;align-items:flex-start}
+  .step + .step{margin-top:14px}
+  .badge{flex:none;width:34px;height:34px;border-radius:50%;background:var(--btn);color:var(--btn-ink);font-weight:700;display:grid;place-items:center}
+  ul{padding-left:1.2em;margin:.5em 0}
+  li{margin:.3em 0}
+  label.field{display:block;font-weight:600;margin:14px 0 4px}
+  input[type=text],input[type=email],input[type=number],textarea{
+    width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;
+    background:var(--card);color:var(--ink);font:inherit}
+  input:focus,textarea:focus{outline:3px solid var(--accent-soft);border-color:var(--accent)}
+  textarea{min-height:110px;resize:vertical}
+  textarea.short{min-height:70px}
+  .agein{max-width:120px}
+  .numin{max-width:220px}
+  .btn{display:inline-block;border:1.5px solid transparent;background:var(--btn);color:var(--btn-ink);font:inherit;font-weight:700;
+    padding:11px 22px;border-radius:999px;cursor:pointer;margin:6px 8px 6px 0}
+  .btn:hover{background:var(--btn-h)}
+  .btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+  .btn.ghost:hover{background:var(--accent-soft)}
+  .btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .nav{display:flex;justify-content:space-between;flex-wrap:wrap;margin-top:8px}
+  .invisible{visibility:hidden}
+  .hidden{display:none !important}
+  /* progress */
+  .progress{position:sticky;top:0;z-index:5;background:var(--bg);padding:12px 0 8px;border-bottom:1px solid var(--line)}
+  .bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+  .fill{height:100%;width:0;background:var(--accent);transition:width .3s}
+  .meta{display:flex;justify-content:space-between;gap:12px;font-size:.85rem;color:var(--muted);margin-top:6px}
+  /* puzzles */
+  .q{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin:16px 0}
+  .q .num{font-size:.8rem;font-weight:700;color:var(--accent-ink);letter-spacing:.06em}
+  .q .text{font-weight:600;margin:.2em 0 .6em}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;margin:7px 0;cursor:pointer;font-weight:400}
+  .opt:hover{border-color:var(--accent)}
+  .opt input{margin-top:5px;accent-color:var(--btn);flex:none}
+  .opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+  .opt.idk{border-style:dashed;color:var(--muted)}
+  .opt.inline{display:inline-flex;margin-top:10px}
+  pre{background:var(--code-bg);color:var(--code-ink);padding:14px 16px;border-radius:10px;overflow:auto;font-size:.92rem;line-height:1.5;margin:10px 0}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  :not(pre)>code{background:var(--chip);padding:1px 6px;border-radius:6px;font-size:.92em}
+  .yours{margin:10px 0 0;white-space:pre-wrap;font-size:.95rem}
+  .res{margin-top:10px;padding:12px 14px;border-radius:10px;font-size:.95rem}
+  .res.ok{background:var(--ok-soft)} .res.info{background:var(--info-soft)} .res.warn{background:var(--warn-soft)}
+  .res .verdict{font-weight:700;margin-bottom:4px}
+  .parthead{margin-top:26px}
+  footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem}
+  @media (max-width:620px){
+    h1{font-size:1.85rem}
+    .grid{grid-template-columns:1fr}
+    .card,.q{padding:16px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ===================== INTRO ===================== -->
+<section id="intro">
+  <header class="hero">
+    <div class="eyebrow">AI &amp; Robotics course · ages 12+</div>
+    <h1>Skills Check</h1>
+    <p class="lead">Before the course starts, have a go at a few robotics, coding and AI puzzles. Try them at home, at your own pace.</p>
+  </header>
+
+  <div class="callout">
+    <strong>This is not an exam, and you cannot fail it.</strong>
+    It's completely fine if some things don't work out. We just want to see what you already know and what you enjoy, so that the course is interesting for you: not too easy, and not too hard.
+  </div>
+
+  <!-- <h2>What we do in the course</h2>
+  <div class="grid">
+    <div class="card"><h3>Build</h3><p class="hint">Robots with motors, gears and sensors.</p></div>
+    <div class="card"><h3>Program</h3><p class="hint">From blocks to code: make robots do what you want.</p></div>
+    <div class="card"><h3> AI</h3><p class="hint">How machines learn from examples, and where they get it wrong.</p></div>
+  </div> -->
+
+  <h2>What to do</h2>
+  <div class="card">
+    <div class="step"><div class="badge">1</div><div><strong>Get ready</strong><br>Paper and a pencil for rough work, a calculator if you like, and about 25 minutes somewhere quiet.</div></div>
+    <div class="step"><div class="badge">2</div><div><strong>Try 13 puzzles in 3 parts</strong><br>They get harder as you go. Most puzzles have an “I don't know” option, and choosing it is a good answer. Then answer a few quick questions about yourself.</div></div>
+    <div class="step"><div class="badge">3</div><div><strong>Send us your answers</strong><br>At the end you can copy, download or email them to us. After that you'll see the right answers and explanations.</div></div>
+  </div>
+
+  <h2>How far should I get?</h2>
+  <p>Part 1 is a warm-up. Part 2 needs a bit of logic and some simple maths. Part 3 is meant to be hard, and most people won't solve all of it. That's expected.</p>
+  <p>If you get stuck, skip the puzzle and move on. The questions about you at the end matter just as much as the puzzles.</p>
+
+  <h2>Why we ask</h2>
+  <p>Not to give you a score. We'd like to know:</p>
+  <ul>
+    <li>what you already know,</li>
+    <li>what you enjoy most,</li>
+    <li>whether the course will be interesting for you, or whether you'd like something more challenging.</li>
+  </ul>
+
+  <div class="card">
+    <h3>About you</h3>
+    <label class="field" for="name">Your first name</label>
+    <input type="text" id="name" autocomplete="given-name">
+    <p class="hint err" id="nameMsg" aria-live="polite"></p>
+    <label class="field" for="age">Age</label>
+    <input type="number" id="age" min="10" max="19" class="agein">
+    <label class="field" for="contact">Email (yours or a parent's)</label>
+    <input type="email" id="contact" autocomplete="email">
+    <p class="hint">Only used to contact you about the course.</p>
+  </div>
+
+  <button class="btn" id="startBtn">Start the Skills Check →</button>
+  <p class="hint">Your answers are saved in this browser as you go, so you can close the page and come back later.</p>
+</section>
+
+<!-- ===================== PUZZLES ===================== -->
+<section id="test" class="hidden">
+  <div class="progress">
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <div class="meta"><span id="partLabel"></span><span id="countLabel"></span></div>
+  </div>
+  <div id="partIntro"></div>
+  <div id="questions"></div>
+  <div class="card hidden" id="finishBox">
+    <strong>Ready to finish?</strong>
+    <p>After this you'll see the right answers and explanations, and you won't be able to change your answers any more.</p>
+    <p class="hint" id="finishNote"></p>
+    <button class="btn" id="finishYes">Yes, finish</button>
+    <button class="btn ghost" id="finishNo">Not yet</button>
+  </div>
+  <div class="nav">
+    <button class="btn ghost" id="prevBtn">← Back</button>
+    <button class="btn" id="nextBtn">Next part →</button>
+  </div>
+</section>
+
+<!-- ===================== DONE ===================== -->
+<section id="done" class="hidden">
+  <header class="hero">
+    <div class="eyebrow">All done</div>
+    <h1>Thank you! 🎉</h1>
+    <p class="lead">You finished the Skills Check. Thanks for giving it a go!</p>
+  </header>
+
+  <div class="card" id="summaryCard"></div>
+
+  <h2>1. Send your answers to us</h2>
+  <p>Copy, download or email your answers to <a class="mail" href="#"></a>.</p>
+  <div>
+    <button class="btn" id="copyBtn">Copy my answers</button>
+    <button class="btn ghost" id="dlBtn">Download as a file</button>
+    <button class="btn ghost" id="mailBtn">Email them</button>
+  </div>
+  <p class="hint" id="copyMsg" aria-live="polite"></p>
+
+  <h2>2. Answers and explanations</h2>
+  <p>Here are the answers for Parts 1–3. The written puzzles have no single right answer, so compare your idea with ours.</p>
+  <div id="selfcheck"></div>
+
+  <div class="card">
+    <button class="btn ghost" id="resetBtn">Start a new check</button>
+    <div class="hidden" id="resetBox">
+      <p>This clears all answers saved in this browser. Make sure you've sent yours first.</p>
+      <button class="btn" id="resetYes">Yes, clear everything</button>
+      <button class="btn ghost" id="resetNo">Cancel</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  AI &amp; Robotics course · ages 12+ · Skills Check<br>
+  Questions? Write to <a class="mail" href="#"></a>. Asking for help is not cheating.
+</footer>
+</div>
+
+<script>
+/* ===================== SETTINGS ===================== */
+const CONTACT_EMAIL = "info@aurinkolab.fi";   // where the answers should be sent
+const STORE_KEY = "skillscheck-ai-robotics-v2";
+const IDK = "I don't know";
+
+/* ===================== PUZZLES AND QUESTIONS =====================
+   type "mc"    = one choice (correct = index of the right option, counting from 0)
+   type "num"   = number answer (correct value, tol = allowed difference)
+   type "text"  = written answer (no automatic checking)
+   type "multi" = pick several (About you only)
+*/
+const PARTS = [
+  { title: "Part 1 · Warm-up",
+    desc: "Straightforward once you think about it. Pick one answer for each.",
+    q: [
+      { id: 1, type: "mc",
+        text: "Which of these is a <em>sensor</em>, a part that lets a robot notice something about the world?",
+        opts: ["A gear", "A camera", "A wheel", "An axle"], correct: 1,
+        why: "A sensor measures something about the world: light, distance, colour, touch or sound. A camera is a light sensor with millions of tiny pixels. Gears, wheels and axles move things, but they notice nothing." },
+      { id: 2, type: "mc",
+        text: "Which of these is an example of an <em>algorithm</em>?",
+        opts: ["A photo of a cake", "A recipe for pancakes", "A list of your favourite foods", "A shopping receipt"], correct: 1,
+        why: "An algorithm is a clear, step-by-step set of instructions for doing something, and a recipe is exactly that. A program is an algorithm written so that a computer or a robot can follow it." },
+      { id: 3, type: "mc",
+        text: "A robot runs this program. What path does it drive?",
+        code: "repeat 4 times:\n    drive forward 20 cm\n    turn right 90°",
+        opts: ["A straight line", "A triangle", "A square", "A circle"], correct: 2,
+        why: "Four equal sides and four 90° turns make a square, and the robot ends up where it started." },
+      { id: 4, type: "mc",
+        text: "How does a machine-learning model usually learn to recognise apples in photos?",
+        opts: ["Someone writes down every possible apple shape", "It studies lots of example photos labelled “apple” or “not apple”", "It tastes the apples", "It looks every photo up on the internet"], correct: 1,
+        why: "Machine learning finds patterns in lots of labelled examples. That is also why it can fail on things that look different from everything it saw while learning. Puzzle 13 is about exactly that." }
+    ]},
+  { title: "Part 2 · Think like a programmer",
+    desc: "A bit of logic and some simple maths. Use paper, and show your working if you like.",
+    q: [
+      { id: 5, type: "num",
+        text: "Follow this program step by step. What is the final value of <code>count</code>?",
+        code: "count = 0\nrepeat 4 times:\n    count = count + 3\n    if count > 8:\n        count = count - 5",
+        correct: 7, tol: 0, unit: "",
+        why: "Round by round: 3 → 6 → 9, which is more than 8, so 9 − 5 = 4 → 7. The answer is 7." },
+      { id: 6, type: "num",
+        text: "A robot's wheel has a diameter of <strong>56 mm</strong>. The robot must drive <strong>500 mm</strong> forward. About how many wheel rotations is that? (Use π ≈ 3.14. One decimal place is enough.)",
+        correct: 2.8, tol: 0.25, unit: "rotations",
+        why: "In one rotation the wheel rolls the length of its circumference: π × 56 ≈ 176 mm. Then 500 ÷ 176 ≈ 2.8 rotations." },
+      { id: 7, type: "mc",
+        text: "A motor turns an <strong>8-tooth</strong> gear. That gear turns a <strong>24-tooth</strong> gear, which is connected to the wheel. Compared with the motor, how does the wheel turn?",
+        opts: ["3 times faster, with less force", "3 times slower, with more force", "At the same speed", "At the same speed, but the other way"], correct: 1,
+        why: "24 ÷ 8 = 3, so the wheel turns 3 times slower, but with about 3 times more turning force (torque). That is handy for lifting arms or climbing slopes. And yes, it also turns the other way, because two meshing gears always do." },
+      { id: 8, type: "mc",
+        text: "A light sensor reads <strong>72</strong> on white paper and <strong>8</strong> on a black line. The robot must decide “black or white”. Which threshold is the most sensible?",
+        opts: ["0", "About 40", "72", "100"], correct: 1,
+        why: "Halfway between the two readings works best: (72 + 8) ÷ 2 = 40. On a real robot you would also test it, because the light in the room changes the readings." }
+    ]},
+  { title: "Part 3 · Challenge",
+    desc: "These are meant to be hard, and most people won't solve all of them. If you can, great: it tells us to have harder challenges ready for you. If you can't, that's exactly what the course is for. Short answers are enough.",
+    q: [
+      { id: 9, type: "num",
+        text: "This is Python code. A robot uses the function <code>speed</code> to choose how fast to drive, depending on how far away an obstacle is (in cm). What number does the program print?",
+        code: "def speed(distance):\n    if distance > 50:\n        return 100\n    elif distance > 20:\n        return 50\n    else:\n        return 0\n\ntotal = 0\nfor d in [80, 35, 10, 60]:\n    total = total + speed(d)\nprint(total)",
+        correct: 250, tol: 0, unit: "",
+        why: "<code>speed(80)</code> = 100, <code>speed(35)</code> = 50, <code>speed(10)</code> = 0 and <code>speed(60)</code> = 100, so the total is 100 + 50 + 0 + 100 = 250. If you had never seen Python before and still worked this out, that is impressive." },
+      { id: 10, type: "text",
+        text: "This program should make the robot stop 10 cm before a wall. Instead, it drives straight into the wall. Why? How would you fix it?",
+        code: "if distance < 10:\n    stop\ndrive forward",
+        hint: "Think about <em>when</em> each line runs.",
+        why: "The check <code>if distance &lt; 10</code> runs only <em>once</em>, right at the start, while the wall is still far away. After that the robot just keeps driving. The fix is a loop, so that the robot checks again and again: <code>repeat until distance &lt; 10: drive forward</code>, then <code>stop</code>." },
+      { id: 11, type: "mc",
+        text: "A robot follows the edge of a black line. Its light sensor reads about 40 when it is exactly on the edge. Why does Program B usually follow the line more smoothly than Program A?",
+        code: "Program A:\n    if sensor < 40:  turn hard left\n    else:            turn hard right\n\nProgram B:\n    turn = 0.8 × (sensor − 40)\n    (negative = left, positive = right)",
+        opts: ["B makes the robot drive faster", "B turns a lot when the robot is far off the edge, and only a little when it is close", "B doesn't need the light sensor", "B only ever turns in one direction"], correct: 1,
+        why: "Program A always turns at full strength, so the robot zig-zags along the line. Program B turns in proportion to the error, meaning how far the reading is from 40: a big error gives a big turn, a small error a small turn. This is called a <strong>proportional controller</strong> (the P in PID), and it is one of the most useful ideas in robotics." },
+      { id: 12, type: "text",
+        text: "A robot is in a simple maze and must find the exit. It has one distance sensor pointing left and one pointing forward. Describe a simple strategy it could use.",
+        hint: "A rough idea in your own words is enough. You can sketch it on paper first.",
+        why: "A classic idea is <strong>wall following</strong> (the left-hand rule): if there is an opening on the left, turn left; otherwise, if the way ahead is free, drive forward; otherwise turn right. Keep repeating. This solves many mazes, though not every kind." },
+      { id: 13, type: "text",
+        text: "Someone trains an AI to recognise cats using 1,000 photos. Every photo was taken indoors, in daylight. When they test it on photos taken outdoors at night, it often fails. Why might that happen? What would you do to improve it?",
+        hint: "Think about what the AI has seen, and what it hasn't.",
+        why: "The model can only learn from the examples it was shown. It never saw dark, outdoor photos, so to it they look like something completely new. The fix: train it on many different photos (outdoors, at night, different cats, angles and backgrounds), and always test it on photos it has never seen before. This problem is called <strong>biased</strong> or <strong>unrepresentative training data</strong>." }
+    ]},
+  { title: "Part 4 · About you", survey: true,
+    desc: "No right or wrong answers here. This part helps us the most, so just answer honestly.",
+    q: [
+      { id: 14, type: "mc", noIdk: true,
+        text: "Have you programmed before?",
+        opts: ["Not yet", "Yes, with blocks (Scratch, LEGO apps, micro:bit blocks…)", "A little in a text language (Python, JavaScript…)", "Yes, I often write my own programs in a text language"] },
+      { id: 15, type: "mc", noIdk: true,
+        text: "Have you built or programmed robots or gadgets before?",
+        opts: ["Not yet", "I've built LEGO or other models", "I've built and programmed robots (LEGO, micro:bit…)", "I've made my own projects with motors, sensors or electronics (Arduino, Raspberry Pi…)"] },
+      { id: 16, type: "multi",
+        text: "What sounds most interesting to you? Pick as many as you like.",
+        opts: ["Building robots and machines", "Programming", "Artificial intelligence", "Electronics and sensors", "Puzzles and logic", "Inventing my own projects"] },
+      { id: 17, type: "text",
+        text: "Tell us about something you have built, programmed or made, or something you would love to build one day. Anything counts: Scratch, Minecraft, LEGO, a school project…",
+        hint: "Two or three sentences are plenty." },
+      { id: 18, type: "mc", noIdk: true,
+        text: "How did the puzzles in Parts 1–3 feel?",
+        opts: ["Too easy, I'd like something harder", "Mostly fine, a few were tricky", "Hard, but interesting", "Most were too hard for me right now"] },
+      { id: 19, type: "text",
+        text: "Anything else you would like us to know? <span class='hint'>(optional)</span>",
+        hint: "For example, what you hope to learn, or anything in this check that looked odd or unclear to you." }
+    ]}
+];
+
+const ALLQ = PARTS.flatMap(p => p.q);
+const QBY = Object.fromEntries(ALLQ.map(q => [q.id, q]));
+const TEST_PARTS = PARTS.filter(p => !p.survey);
+const TEST_Q = TEST_PARTS.flatMap(p => p.q);
+const AUTO = TEST_Q.filter(q => q.type !== "text");
+const OVERVIEW = [[14, "Programming experience"], [15, "Robots / gadgets experience"], [16, "Interests"], [18, "How the puzzles felt"]];
+const FEEL_MSG = [
+  "You found the puzzles easy, so we'll talk with you about extra challenges.",
+  "Sounds like there will be plenty for you to enjoy in the course.",
+  "Hard but interesting is a great place to start from.",
+  "No problem at all. That's what the course is for, and we'll start from where you are."
+];
+
+/* ===================== STATE ===================== */
+const fresh = () => ({ part: 0, ans: {}, notes: {}, info: { name: "", age: "", contact: "" }, started: false, finished: false, finishedAt: "" });
+let state = fresh();
+function save(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }
+function load(){
+  try {
+    const s = localStorage.getItem(STORE_KEY);
+    if (s) { const o = JSON.parse(s); if (o && typeof o === "object") state = Object.assign(fresh(), o); }
+  } catch (e) {}
+  if (!(state.part >= 0 && state.part < PARTS.length)) state.part = 0;
+}
+
+/* ===================== HELPERS ===================== */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const plain = s => s.replace(/<[^>]+>/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
+const isEmpty = a => a === undefined || a === null || (Array.isArray(a) ? a.length === 0 : String(a).trim() === "");
+function show(id){ ["intro", "test", "done"].forEach(s => $(s).classList.toggle("hidden", s !== id)); window.scrollTo(0, 0); }
+
+/* ===================== RENDER A PART ===================== */
+function renderPart(){
+  const p = PARTS[state.part];
+  $("partLabel").textContent = p.title;
+  if (p.survey) {
+    $("countLabel").textContent = "Almost done";
+  } else {
+    let before = 0;
+    for (let i = 0; i < state.part; i++) before += PARTS[i].q.length;
+    $("countLabel").textContent = `Puzzles ${before + 1}–${before + p.q.length} of ${TEST_Q.length}`;
+  }
+  $("fill").style.width = (state.part / PARTS.length * 100) + "%";
+  $("partIntro").innerHTML = `<h2>${p.title}</h2><p class="lead">${p.desc}</p>`;
+  const box = $("questions");
+  box.innerHTML = "";
+  p.q.forEach(q => box.appendChild(renderQ(q, !!p.survey)));
+  $("prevBtn").classList.toggle("invisible", state.part === 0);
+  const last = state.part === PARTS.length - 1;
+  $("nextBtn").textContent = last ? "Finish ✓" : (PARTS[state.part + 1].survey ? "Next: about you →" : "Next part →");
+  $("finishBox").classList.add("hidden");
+  window.scrollTo(0, 0);
+}
+
+function renderQ(q, survey){
+  const d = document.createElement("div");
+  d.className = "q";
+  const a = state.ans[q.id];
+  let h = `<div class="num">${survey ? "ABOUT YOU" : "PUZZLE " + q.id}</div><div class="text">${q.text}</div>`;
+  if (q.code) h += `<pre><code>${esc(q.code)}</code></pre>`;
+  if (q.hint && q.type === "text") h += `<p class="hint">${q.hint}</p>`;
+
+  if (q.type === "mc") {
+    const opts = q.noIdk ? q.opts : q.opts.concat([IDK]);
+    opts.forEach((o, i) => {
+      const val = i < q.opts.length ? String(i) : "idk";
+      const sel = a !== undefined && a !== null && String(a) === val;
+      h += `<label class="opt${val === "idk" ? " idk" : ""}${sel ? " sel" : ""}"><input type="radio" name="q${q.id}" value="${val}"${sel ? " checked" : ""}><span>${esc(o)}</span></label>`;
+    });
+  } else if (q.type === "multi") {
+    const arr = Array.isArray(a) ? a : [];
+    q.opts.forEach((o, i) => {
+      const sel = arr.includes(i);
+      h += `<label class="opt${sel ? " sel" : ""}"><input type="checkbox" name="q${q.id}" value="${i}"${sel ? " checked" : ""}><span>${esc(o)}</span></label>`;
+    });
+  } else if (q.type === "num") {
+    const isIdk = a === "idk";
+    h += `<label class="field" for="a${q.id}">Your answer${q.unit ? ` (${q.unit})` : ""}</label>
+      <input type="text" inputmode="decimal" id="a${q.id}" class="numin" value="${isIdk ? "" : esc(a ?? "")}" placeholder="number" autocomplete="off">
+      <br><label class="opt idk inline${isIdk ? " sel" : ""}"><input type="checkbox" id="idk${q.id}"${isIdk ? " checked" : ""}><span>${IDK}</span></label>
+      <label class="field" for="n${q.id}">Your working <span class="hint">(optional)</span></label>
+      <textarea id="n${q.id}" class="short" placeholder="Show how you got there…">${esc(state.notes[q.id] || "")}</textarea>`;
+  } else {
+    const ph = survey ? "Type here…" : "Type your answer here, or write “I don't know”";
+    h += `<textarea id="a${q.id}" placeholder="${ph}">${esc(a ?? "")}</textarea>`;
+  }
+  d.innerHTML = h;
+
+  const refresh = () => d.querySelectorAll(".opt").forEach(l => l.classList.toggle("sel", l.querySelector("input").checked));
+  if (q.type === "mc") {
+    d.querySelectorAll("input[type=radio]").forEach(r => r.addEventListener("change", () => {
+      state.ans[q.id] = r.value === "idk" ? "idk" : +r.value;
+      save(); refresh();
+    }));
+  }
+  if (q.type === "multi") {
+    d.querySelectorAll("input[type=checkbox]").forEach(c => c.addEventListener("change", () => {
+      state.ans[q.id] = [...d.querySelectorAll("input[type=checkbox]:checked")].map(x => +x.value);
+      save(); refresh();
+    }));
+  }
+  if (q.type === "num") {
+    const inp = d.querySelector("#a" + q.id), cb = d.querySelector("#idk" + q.id), nt = d.querySelector("#n" + q.id);
+    inp.addEventListener("input", () => {
+      state.ans[q.id] = inp.value;
+      if (cb.checked) { cb.checked = false; refresh(); }
+      save();
+    });
+    cb.addEventListener("change", () => {
+      if (cb.checked) { state.ans[q.id] = "idk"; inp.value = ""; } else { state.ans[q.id] = ""; }
+      refresh(); save();
+    });
+    nt.addEventListener("input", () => { state.notes[q.id] = nt.value; save(); });
+  }
+  if (q.type === "text") {
+    const ta = d.querySelector("#a" + q.id);
+    ta.addEventListener("input", () => { state.ans[q.id] = ta.value; save(); });
+  }
+  return d;
+}
+
+/* ===================== CHECKING ===================== */
+function grade(q){
+  const a = state.ans[q.id];
+  if (isEmpty(a)) return "skip";
+  if (a === "idk") return "idk";
+  if (q.type === "mc") return a === q.correct ? "ok" : "no";
+  const n = parseFloat(String(a).replace(",", ".").replace(/[^0-9.\-]/g, ""));
+  if (isNaN(n)) return "no";
+  return Math.abs(n - q.correct) <= q.tol + 1e-9 ? "ok" : "no";
+}
+function answerText(q){
+  const a = state.ans[q.id];
+  if (q.type === "multi") {
+    const arr = Array.isArray(a) ? a : [];
+    return arr.length ? arr.map(i => q.opts[i]).join(", ") : "(no answer)";
+  }
+  if (isEmpty(a)) return "(no answer)";
+  if (a === "idk") return IDK;
+  if (q.type === "mc") return q.opts[a] ?? "(no answer)";
+  return String(a).trim();
+}
+const correctText = q => q.type === "mc" ? q.opts[q.correct] : q.correct + (q.unit ? " " + q.unit : "");
+
+/* ===================== RESULTS PAGE ===================== */
+function showDone(){
+  show("done");
+  const ok = AUTO.filter(q => grade(q) === "ok").length;
+  const idk = AUTO.filter(q => grade(q) === "idk").length;
+  const written = TEST_Q.filter(q => q.type === "text" && !isEmpty(state.ans[q.id])).length;
+  const feel = state.ans[18];
+  const feelMsg = (typeof feel === "number" && FEEL_MSG[feel]) ? FEEL_MSG[feel] + " " : "";
+  const s = (n, w) => `<strong>${n}</strong> ${w}${n === 1 ? "" : "s"}`;
+  $("summaryCard").innerHTML = `<h3>Your summary</h3>
+    <p>You solved <strong>${ok}</strong> of the ${AUTO.length} puzzles that have one right answer, said “I don't know” ${s(idk, "time")}, and wrote ${s(written, "longer answer")}.</p>
+    <p>${feelMsg}We'll look at your answers and make sure the course is interesting for you.</p>
+    <p class="hint">“I don't know” is a perfectly good answer, and your written answers tell us more than the score.</p>`;
+
+  const sc = $("selfcheck");
+  sc.innerHTML = "";
+  TEST_PARTS.forEach(p => {
+    sc.insertAdjacentHTML("beforeend", `<h3 class="parthead">${p.title}</h3>`);
+    p.q.forEach(q => {
+      const g = q.type === "text" ? (isEmpty(state.ans[q.id]) ? "skipOpen" : "open") : grade(q);
+      const cls = g === "ok" ? "ok" : (g === "open" || g === "skipOpen") ? "info" : "warn";
+      const verdict = {
+        ok: "✅ You got it.",
+        no: "Not quite, and that's how we learn.",
+        idk: "You said “I don't know”. Fair enough, and now you know!",
+        skip: "You skipped this one.",
+        open: "💡 Compare your idea with this one:",
+        skipOpen: "You skipped this one. Here's one way to think about it:"
+      }[g];
+      const correct = q.type === "text" ? "" : `<div><strong>Answer:</strong> ${esc(correctText(q))}</div>`;
+      sc.insertAdjacentHTML("beforeend", `<div class="q"><div class="num">PUZZLE ${q.id}</div><div class="text">${q.text}</div>
+        ${q.code ? `<pre><code>${esc(q.code)}</code></pre>` : ""}
+        <div class="yours"><strong>Your answer:</strong> ${esc(answerText(q))}</div>
+        <div class="res ${cls}"><div class="verdict">${verdict}</div>${correct}<div>${q.why}</div></div></div>`);
+    });
+  });
+}
+
+/* ===================== EXPORT ===================== */
+function exportText(){
+  const L = [], i = state.info;
+  L.push("SKILLS CHECK — AI & Robotics 12+");
+  L.push(`Name: ${i.name || "-"}   Age: ${i.age || "-"}   Contact: ${i.contact || "-"}`);
+  L.push(`Date: ${state.finishedAt || new Date().toISOString().slice(0, 10)}`);
+  L.push("");
+  L.push("QUICK OVERVIEW");
+  TEST_PARTS.forEach(p => {
+    const auto = p.q.filter(q => q.type !== "text"), open = p.q.filter(q => q.type === "text");
+    const ok = auto.filter(q => grade(q) === "ok").length;
+    const wrote = open.filter(q => !isEmpty(state.ans[q.id])).length;
+    L.push(`${p.title}: ${ok}/${auto.length} correct${open.length ? `, ${wrote}/${open.length} written answers` : ""}`);
+  });
+  L.push(`"I don't know": ${AUTO.filter(q => grade(q) === "idk").length}   Skipped: ${TEST_Q.filter(q => isEmpty(state.ans[q.id])).length}`);
+  OVERVIEW.forEach(([id, label]) => L.push(`${label}: ${answerText(QBY[id])}`));
+  L.push("");
+  PARTS.forEach(p => {
+    L.push(`=== ${p.title} ===`);
+    p.q.forEach(q => {
+      L.push(`${p.survey ? "" : "Q" + q.id + ". "}${plain(q.text)}`);
+      let ans = "Answer: " + answerText(q);
+      if (!p.survey && q.type !== "text") {
+        const g = grade(q);
+        if (g === "ok") ans += "  ✓";
+        else if (g === "no") ans += `  ✗ (correct: ${correctText(q)})`;
+      }
+      L.push(ans);
+      if (q.type === "num" && !isEmpty(state.notes[q.id])) L.push("Working: " + String(state.notes[q.id]).trim());
+      L.push("");
+    });
+  });
+  return L.join("\n");
+}
+
+async function copyText(t){
+  try { await navigator.clipboard.writeText(t); return true; } catch (e) {}
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = t; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    const ok = document.execCommand("copy");
+    ta.remove();
+    return ok;
+  } catch (e) { return false; }
+}
+
+/* ===================== EVENTS ===================== */
+$("startBtn").addEventListener("click", () => {
+  const name = $("name").value.trim();
+  if (!name) {
+    $("nameMsg").textContent = "Please write your first name, so we know whose answers these are.";
+    $("name").focus();
+    return;
+  }
+  $("nameMsg").textContent = "";
+  state.info = { name, age: $("age").value.trim(), contact: $("contact").value.trim() };
+  state.started = true;
+  save(); show("test"); renderPart();
+});
+
+$("nextBtn").addEventListener("click", () => {
+  if (state.part < PARTS.length - 1) { state.part++; save(); renderPart(); return; }
+  const empty = TEST_Q.filter(q => isEmpty(state.ans[q.id])).length;
+  $("finishNote").textContent = empty ? `You left ${empty} puzzle${empty === 1 ? "" : "s"} empty. That's OK.` : "";
+  $("finishBox").classList.remove("hidden");
+  $("finishBox").scrollIntoView({ behavior: "smooth", block: "center" });
+});
+$("prevBtn").addEventListener("click", () => { if (state.part > 0) { state.part--; save(); renderPart(); } });
+$("finishNo").addEventListener("click", () => $("finishBox").classList.add("hidden"));
+$("finishYes").addEventListener("click", () => {
+  state.finished = true;
+  state.finishedAt = new Date().toISOString().slice(0, 10);
+  save(); showDone();
+});
+
+$("copyBtn").addEventListener("click", async () => {
+  const ok = await copyText(exportText());
+  $("copyMsg").textContent = ok ? "Copied! Paste them into an email or a message to us." : "Couldn't copy automatically. Please use “Download as a file” instead.";
+});
+$("dlBtn").addEventListener("click", () => {
+  const blob = new Blob(["\ufeff" + exportText()], { type: "text/plain;charset=utf-8" });
+  const a = document.createElement("a");
+  const slug = (state.info.name || "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-+|-+$/g, "") || "answers";
+  a.href = URL.createObjectURL(blob);
+  a.download = "skills-check-" + slug + ".txt";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+});
+$("mailBtn").addEventListener("click", async () => {
+  const text = exportText();
+  await copyText(text);
+  const subject = "Skills Check — AI & Robotics 12+" + (state.info.name ? " — " + state.info.name : "");
+  let body = text;
+  if (encodeURIComponent(body).length > 1800) body = "Hi!\n\nHere are my Skills Check answers:\n\n(paste them here)\n";
+  $("copyMsg").textContent = "Your email app should open now. If your answers aren't in the message, paste them in: they're already copied.";
+  location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+});
+
+$("resetBtn").addEventListener("click", () => $("resetBox").classList.remove("hidden"));
+$("resetNo").addEventListener("click", () => $("resetBox").classList.add("hidden"));
+$("resetYes").addEventListener("click", () => {
+  try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+  state = fresh();
+  ["name", "age", "contact"].forEach(id => $(id).value = "");
+  $("resetBox").classList.add("hidden");
+  $("startBtn").textContent = "Start the Skills Check →";
+  show("intro");
+});
+
+/* ===================== START ===================== */
+document.querySelectorAll("a.mail").forEach(a => { a.textContent = CONTACT_EMAIL; a.href = "mailto:" + CONTACT_EMAIL; });
+load();
+$("name").value = state.info.name || "";
+$("age").value = state.info.age || "";
+$("contact").value = state.info.contact || "";
+if (state.finished) showDone();
+else if (state.started) $("startBtn").textContent = "Continue where you left off →";
+</script>
+</body>
+</html>''
